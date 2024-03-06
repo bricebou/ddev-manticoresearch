@@ -1,0 +1,28 @@
+services:
+  manticoresearch:
+    container_name: ddev-${DDEV_SITENAME}-manticoresearch
+    hostname: ${DDEV_SITENAME}-manticoresearch
+    image: manticoresearch/manticore
+    restart: "no"
+    environment:
+      - EXTRA=1
+      - VIRTUAL_HOST=$DDEV_HOSTNAME
+    external_links:
+      - ddev-router:${DDEV_SITENAME}.${DDEV_TLD}
+    labels:
+      com.ddev.approot: $DDEV_APPROOT
+      com.ddev.site-name: ${DDEV_SITENAME}
+    expose:
+      - 9306
+      - 9308
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./data:/var/lib/manticore/data
+      - ./manticoresearch/manticore.conf:/etc/manticoresearch/manticore.conf
