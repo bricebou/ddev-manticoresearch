@@ -25,4 +25,4 @@ services:
         hard: -1
     volumes:
       - ./data:/var/lib/manticore/data
-      - ./manticoresearch/manticore.conf:/etc/manticoresearch/manticore.conf
+      - ./manticoresearch/:/etc/manticoresearch/

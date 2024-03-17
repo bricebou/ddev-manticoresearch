@@ -14,7 +14,8 @@ ddev get bricebou/ddev-manticoresearch && ddev restart
 
 This add-on for DDEV installs the following files :
 - `.ddev/docker-compose.manticoresearch.yaml` wich is responsible for launching the service;
-- a `.ddev/manticoresearch/manticore.conf`
+- a `.ddev/manticoresearch/manticore.conf` which contains global Manticore Search configuration;
+- a `.ddev/manticoresearch/indexes.conf` in which you can configure your indexes.
 
 ## Using PHP for your configuration file
 
