@@ -1,3 +1,4 @@
+#ddev-generated
 services:
   manticoresearch:
     container_name: ddev-${DDEV_SITENAME}-manticoresearch
