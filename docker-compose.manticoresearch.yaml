@@ -13,7 +13,7 @@ services:
     labels:
       com.ddev.approot: $DDEV_APPROOT
       com.ddev.site-name: ${DDEV_SITENAME}
-    expose:
+    ports:
       - 9306
       - 9308
     ulimits:
@@ -25,5 +25,8 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - ./manticoresearch/data:/var/lib/manticore
+      - manticoresearch:/var/lib/manticore
       - ./manticoresearch/manticore.conf:/etc/manticoresearch/manticore.conf
+volumes:
+  manticoresearch:
+    name: ddev-${DDEV_SITENAME}-manticoresearch
