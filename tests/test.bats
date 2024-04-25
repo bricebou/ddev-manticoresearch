@@ -13,7 +13,6 @@ setup() {
 
 health_checks() {
   # Do something useful here that verifies the add-on
-  # ddev exec "curl -s elasticsearch:9200" | grep "${PROJNAME}-elasticsearch"
   ddev exec "sleep 20 && curl -s manticoresearch:9308"
 }
 

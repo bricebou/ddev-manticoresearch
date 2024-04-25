@@ -40,3 +40,6 @@ RUN apt update && apt -y install php
 ```
 - edit the `.ddev/manticoresearch/manticore.conf` according to your need, replacing the actual shebang with `#!/usr/bin/env php` 
 - run `ddev restart`
+
+
+_Maintained by [bricebou](https://github.com/bricebou/)._
