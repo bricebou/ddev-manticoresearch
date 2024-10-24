@@ -6,9 +6,15 @@
 
 ## Installation
 
-Like any other DDEV add-on, you juste have to run :
+For DDEV v1.23.5 or above run
 
+```sh
+ddev add-on get bricebou/ddev-manticoresearch && ddev restart
 ```
+
+For earlier versions of DDEV run
+
+```sh
 ddev get bricebou/ddev-manticoresearch && ddev restart
 ```
 
