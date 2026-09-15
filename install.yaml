@@ -3,7 +3,20 @@
 
 name: manticoresearch
 
+# `.ddev/.env.manticoresearch` (used to pin MANTICORESEARCH_DOCKER_IMAGE)
+# is only read by DDEV v1.23.5 and above.
+ddev_version_constraint: '>= v1.23.5'
+
 # list of files and directories that are copied into the project .ddev directory
 project_files:
   - docker-compose.manticoresearch.yaml
   - manticoresearch/
+
+post_install_actions:
+  - |
+    #ddev-nodisplay
+    #ddev-description:Manticore Search version
+    echo "To run another Manticore Search version, e.g. the one used in production:"
+    echo "  ddev dotenv set .ddev/.env.manticoresearch --manticoresearch-docker-image=manticoresearch/manticore:25.0.0"
+    echo "  ddev restart"
+    echo "and commit .ddev/.env.manticoresearch to version control."
