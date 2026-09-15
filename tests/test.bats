@@ -4,6 +4,7 @@ setup() {
   export TESTDIR=~/tmp/test-manticoresearch
   mkdir -p $TESTDIR
   export PROJNAME=test-manticoresearch
+  export MANTICORE_TEST_IMAGE=${MANTICORE_TEST_IMAGE:-manticoresearch/manticore:25.0.0}
   export DDEV_NON_INTERACTIVE=true
   ddev delete -Oy ${PROJNAME} >/dev/null 2>&1 || true
   cd "${TESTDIR}"
@@ -30,6 +31,15 @@ teardown() {
   ddev add-on get ${DIR}
   ddev restart
   health_checks
+  # A fresh install must run the version pinned in docker-compose.manticoresearch.yaml,
+  # not a floating tag.
+  default_image=$(sed -n 's|.*MANTICORESEARCH_DOCKER_IMAGE:-\(.*\)}.*|\1|p' "${DIR}/docker-compose.manticoresearch.yaml")
+  echo "# pinned default is ${default_image}" >&3
+  [ -n "${default_image}" ]
+  [[ "${default_image}" != *:latest ]]
+  run docker inspect --format '{{.Config.Image}}' ddev-${PROJNAME}-manticoresearch
+  [ "$status" -eq 0 ]
+  [ "$output" = "${default_image}" ]
 }
 
 @test "install from release" {
@@ -41,3 +51,15 @@ teardown() {
   health_checks
 }
 
+@test "pin a specific Manticore Search version" {
+  set -eu -o pipefail
+  cd ${TESTDIR}
+  echo "# pinning ${MANTICORE_TEST_IMAGE} with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
+  ddev add-on get ${DIR}
+  ddev dotenv set .ddev/.env.manticoresearch --manticoresearch-docker-image=${MANTICORE_TEST_IMAGE}
+  ddev restart
+  health_checks
+  run docker inspect --format '{{.Config.Image}}' ddev-${PROJNAME}-manticoresearch
+  [ "$status" -eq 0 ]
+  [ "$output" = "${MANTICORE_TEST_IMAGE}" ]
+}
