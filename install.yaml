@@ -7,6 +7,20 @@ name: manticoresearch
 # is only read by DDEV v1.23.5 and above.
 ddev_version_constraint: '>= v1.23.5'
 
+pre_install_actions:
+  - |
+    #ddev-nodisplay
+    #ddev-description:Keep the current Manticore Search version on existing installs
+    # Fresh installs get the version pinned in docker-compose.manticoresearch.yaml.
+    # Installs made before versions were pinned were running `latest`; keep it that way
+    # so that updating the add-on never downgrades an existing data volume.
+    cd "${DDEV_APPROOT}"
+    if [ -f .ddev/docker-compose.manticoresearch.yaml ] && [ ! -f .ddev/.env.manticoresearch ]; then
+      ddev dotenv set .ddev/.env.manticoresearch --manticoresearch-docker-image=manticoresearch/manticore:latest
+      echo "Existing installation detected: kept 'manticoresearch/manticore:latest' in .ddev/.env.manticoresearch."
+      echo "Pin an explicit version there once you are ready to migrate your indexes."
+    fi
+
 # list of files and directories that are copied into the project .ddev directory
 project_files:
   - docker-compose.manticoresearch.yaml
@@ -20,3 +34,11 @@ post_install_actions:
     echo "  ddev dotenv set .ddev/.env.manticoresearch --manticoresearch-docker-image=manticoresearch/manticore:25.0.0"
     echo "  ddev restart"
     echo "and commit .ddev/.env.manticoresearch to version control."
+
+removal_actions:
+  - |
+    #ddev-nodisplay
+    #ddev-description:Leftover files
+    if [ -f "${DDEV_APPROOT}/.ddev/.env.manticoresearch" ]; then
+      echo "Note: '.ddev/.env.manticoresearch' was left in place, remove it manually if you no longer need it."
+    fi
