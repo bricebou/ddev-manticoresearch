@@ -3,7 +3,9 @@ services:
   manticoresearch:
     container_name: ddev-${DDEV_SITENAME}-manticoresearch
     hostname: ${DDEV_SITENAME}-manticoresearch
-    image: manticoresearch/manticore
+    # Change the Manticore Search version with:
+    #   ddev dotenv set .ddev/.env.manticoresearch --manticoresearch-docker-image=manticoresearch/manticore:25.0.0
+    image: ${MANTICORESEARCH_DOCKER_IMAGE:-manticoresearch/manticore:29.9.0}
     restart: "no"
     environment:
       - EXTRA=1
