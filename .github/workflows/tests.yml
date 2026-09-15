@@ -24,9 +24,15 @@ jobs:
     strategy:
       matrix:
         ddev_version: [stable, HEAD]
+        manticore_image:
+          - manticoresearch/manticore:latest
+          - manticoresearch/manticore:25.0.0
       fail-fast: false
 
     runs-on: ubuntu-latest
+
+    env:
+      MANTICORE_TEST_IMAGE: ${{ matrix.manticore_image }}
 
     steps:
       - uses: ddev/github-action-add-on-test@v2
