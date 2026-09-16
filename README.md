@@ -87,7 +87,6 @@ In `.ddev/docker-compose.manticoresearch.yaml`, replace
 with
 
 ```yaml
-    image: ddev-${DDEV_SITENAME}-manticoresearch-php
     build:
       args:
         BASE_IMAGE: ${MANTICORESEARCH_DOCKER_IMAGE:-manticoresearch/manticore:29.9.0}
@@ -105,6 +104,12 @@ and add the two files of the next steps to the existing `volumes:` list:
 Keeping `${MANTICORESEARCH_DOCKER_IMAGE}` as the `BASE_IMAGE` is what makes version pinning
 keep working in this mode.
 
+Note that the `image:` key is **replaced**, not kept alongside `build:`. DDEV tries to pull
+every image declared by an `image:` key, including buildable ones, so a locally built name
+would make every `ddev start` print a `pull access denied` warning before falling back to
+building it. Without that key, Compose names the built image after the project and the
+service, and nothing is ever pulled.
+
 ### 3. Turn `manticore.conf` into a launcher
 
 Rather than putting a PHP shebang in `manticore.conf` itself, keep it as a two-line shell
@@ -121,13 +126,14 @@ DIR=$(dirname "$0")
 
 `$DIR` resolves to `/etc/manticoresearch`, where the files below are mounted next to it.
 
-> **Remove the `#ddev-generated` line from `manticore.conf` while you are at it.** DDEV
-> replaces files that still carry that marker on the next `ddev add-on get`, even if you have
-> modified them, and leaves the others alone. The same applies to
-> `docker-compose.manticoresearch.yaml` — either drop its marker too, or leave it untouched
-> and put the `image` / `build` / `volumes` overrides of step 2 in a separate
-> `.ddev/docker-compose.manticoresearch_extra.yaml`. DDEV merges every `docker-compose.*.yaml`
-> of the project, and `.ddev/.env.manticoresearch` is applied to all of them.
+> **Remove the `#ddev-generated` line from `manticore.conf` and from
+> `docker-compose.manticoresearch.yaml` while you are at it.** DDEV replaces files that still
+> carry that marker on the next `ddev add-on get`, even if you have modified them, and leaves
+> the others alone. Both files become yours to maintain, which for this setup is the only
+> option: moving the step 2 changes to a separate `docker-compose.manticoresearch_extra.yaml`
+> does not work, because a Compose override can add keys but never remove the `image:` key of
+> the file it overrides — the build would then be tagged as the official Manticore image and
+> shadow it locally.
 
 ### 4. Write the configuration in PHP
 
